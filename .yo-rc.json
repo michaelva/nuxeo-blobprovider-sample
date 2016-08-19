@@ -1,0 +1,11 @@
+{
+  "generator-nuxeo": {
+    "promptValues": {
+      "parent_package": "org.nuxeo.sample.blobprovider",
+      "parent_artifact": "nuxeo-blobprovider-sample-parent",
+      "nuxeo_version": "8.3",
+      "package": "org.nuxeo.sample.blobprovider"
+    },
+    "multi": true
+  }
+}

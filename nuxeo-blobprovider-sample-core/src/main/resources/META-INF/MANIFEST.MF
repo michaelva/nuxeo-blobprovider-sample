@@ -1,0 +1,8 @@
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Manifest-Version: 1.0
+Bundle-Vendor: org.nuxeo.sample.blobprovider
+Bundle-Version: 1.0.0
+Bundle-Name: nuxeo-blobprovider-sample-core
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: nuxeo-blobprovider-sample-core;singleton=true
