@@ -20,9 +20,12 @@ import org.nuxeo.runtime.test.runner.LocalDeploy;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.Serializable;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @RunWith(FeaturesRunner.class)
 @Features({CoreFeature.class })
@@ -31,11 +34,16 @@ import java.nio.file.Paths;
 @LocalDeploy({ "nuxeo-blobprovider-sample-core:blobprovider-test.xml" })
 public class TestSampleBlobProvider {
 
+    public static final String URL =
+            "https://upload.wikimedia.org/wikipedia/en/thumb/6/66/" +
+                    "Nuxeo-Zago-logo_big_white.png/330px-Nuxeo-Zago-logo_big_white.png";
+
     /*
      *  The CoreSession object provides the methods to add, modify and delete content in the repository
      */
     @Inject
     CoreSession session;
+
 
     @Test
     public void testBlobProvider() throws Exception {
@@ -73,9 +81,17 @@ public class TestSampleBlobProvider {
         /*
          * The key is the most important information. Here you can see it contains the URL of the Blob
          */
-        blobInfo.key = "sampleProvider:https://upload.wikimedia.org/wikipedia/en/thumb/6/66/Nuxeo-Zago-logo_big_white.png/330px-Nuxeo-Zago-logo_big_white.png";
+        blobInfo.key = "sampleProvider:"+URL;
         blobInfo.mimeType = "image/png";
         blobInfo.filename = "logo340x60.png";
+        /*
+         * The length of the file must also be set. Here we need to open an http connection to get it
+         */
+        java.net.URL url = new URL(URL);
+        URLConnection connection = url.openConnection();
+        final long length = connection.getContentLengthLong();
+        blobInfo.length = length;
+
 
         /*
          * The readBlob methods takes the blob description object and turns it into a Blob object
@@ -113,11 +129,11 @@ public class TestSampleBlobProvider {
          * the standard i/o methods of the Java SDK
          */
         Path filePath = Paths.get("logo.png");
-        Files.copy(myBlob.getStream(),filePath);
+        Files.copy(myBlob.getStream(),filePath, StandardCopyOption.REPLACE_EXISTING);
 
         File file = filePath.toFile();
         Assert.assertTrue(file.exists());
-        Assert.assertTrue(file.length()>0);
+        Assert.assertEquals(length,file.length());
 
     }
 
